@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulaire de Confirmation</title>
+</head>
+<body>
+    <h2>Formulaire de Confirmation de Présence</h2>
+
+    <form action="https://script.google.com/macros/s/AKfycbwnlX5D6rhwKRn0sbaCu5s0wIfl3vWKeUsn9miPUQkJGDYGGG49-83tdBszCDbd0YQq/exec" method="POST">
+        <label for="agentName">Nom de l'agent :</label>
+        <input type="text" id="agentName" name="agentName" required><br><br>
+
+        <label for="clientName">Nom du client :</label>
+        <input type="text" id="clientName" name="clientName" required><br><br>
+
+        <label for="geoLocation">Votre position :</label>
+        <input type="text" id="geoLocation" name="geoLocation" readonly><br><br>
+
+        <button type="submit">Soumettre</button>
+    </form>
+
+    <script>
+        // Récupération de la position géographique
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                var lat = position.coords.latitude;
+                var lon = position.coords.longitude;
+                document.getElementById("geoLocation").value = "Latitude: " + lat + ", Longitude: " + lon;
+            }, function(error) {
+                alert("Impossible de récupérer la position");
+            });
+        } else {
+            alert("La géolocalisation n'est pas supportée par ce navigateur.");
+        }
+    </script>
+</body>
+</html>

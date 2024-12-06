@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmation de Présence</title>
+</head>
+<body>
+    <h2>Confirmation de présence</h2>
+    <form id="presenceForm">
+        <label for="agentName">Nom de l'agent :</label>
+        <input type="text" id="agentName" name="agentName" placeholder="Votre nom" required><br><br>
+
+        <label for="clientName">Nom du client :</label>
+        <input type="text" id="clientName" name="clientName" placeholder="Nom du client" required><br><br>
+
+        <input type="hidden" id="geoLocation" name="geoLocation">
+
+        <button type="submit">Envoyer</button>
+    </form>
+
+    <p id="status"></p>
+
+    <script>
+        // Capturer automatiquement la géolocalisation
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        var latitude = position.coords.latitude;
+                        var longitude = position.coords.longitude;
+                        document.getElementById("geoLocation").value = latitude + ", " + longitude;
+                    },
+                    function(error) {
+                        document.getElementById("status").innerText = "Impossible de récupérer la position.";
+                        console.error("Erreur de géolocalisation : ", error);
+                    }
+                );
+            } else {
+                document.getElementById("status").innerText = "La géolocalisation n'est pas supportée par ce navigateur.";
+            }
+        }
+
+        // Appeler la fonction pour capturer la position dès le chargement de la page
+        window.onload = getLocation;
+
+        // Gestion de l'envoi du formulaire
+        document.getElementById("presenceForm").onsubmit = function(event) {
+            event.preventDefault();
+            document.getElementById("status").innerText = "Envoi en cours...";
+
+            // Envoyer les données à Apps Script
+            fetch("VOTRE_URL_APPS_SCRIPT", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    agentName: document.getElementById("agentName").value,
+                    clientName: document.getElementById("clientName").value,
+                    geoLocation: document.getElementById("geoLocation").value
+                })
+            })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("status").innerText = "Présence confirmée avec succès.";
+            })
+            .catch(error => {
+                document.getElementById("status").innerText = "Erreur lors de l'envoi.";
+                console.error("Erreur : ", error);
+            });
+        };
+    </script>
+</body>
+</html>
